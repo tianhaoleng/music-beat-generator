@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>音乐伴奏生成器 - 一键生成原创伴奏</title>
+    <title>Beat Forge - 专业音乐伴奏生成器</title>
     <style>
         * {
             margin: 0;
@@ -11,190 +11,355 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #007AFF;
+            --primary-light: #0A84FF;
+            --secondary: #5AC8FA;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --text-primary: #000000;
+            --text-secondary: #86868b;
+            --border: #e5e5ea;
+            --success: #34C759;
+            --warning: #FF9500;
+            --danger: #FF3B30;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 500px;
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .header {
+        .wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+
+        /* 头部标题 */
+        .hero {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 80px;
+            animation: fadeInUp 0.8s ease-out;
         }
 
-        .header h1 {
-            font-size: 28px;
-            color: #667eea;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
             margin-bottom: 10px;
+            font-weight: 400;
         }
 
-        .header p {
-            color: #999;
-            font-size: 14px;
+        .hero .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
         }
 
+        /* 主卡片 */
+        .main-card {
+            background: var(--bg-primary);
+            border-radius: 24px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            border: 1px solid var(--border);
+        }
+
+        /* 控制面板 */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 控制组 */
         .control-group {
-            margin-bottom: 25px;
+            animation: fadeInUp 0.8s ease-out both;
         }
+
+        .control-group:nth-child(1) { animation-delay: 0.3s; }
+        .control-group:nth-child(2) { animation-delay: 0.4s; }
+        .control-group:nth-child(3) { animation-delay: 0.5s; }
+        .control-group:nth-child(4) { animation-delay: 0.6s; }
 
         .control-group label {
             display: block;
+            font-size: 16px;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
         }
 
+        .control-group label .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        /* 风格选择器 */
         .style-buttons {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
 
         .style-btn {
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 10px;
+            padding: 16px 20px;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 13px;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .style-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
+            border-color: var(--primary);
+            background: rgba(0, 122, 255, 0.08);
+            transform: translateY(-2px);
         }
 
         .style-btn.active {
-            background: #667eea;
+            background: var(--primary);
             color: white;
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
         }
 
+        /* 滑块 */
         .slider-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 16px;
         }
 
         input[type="range"] {
             flex: 1;
             height: 6px;
             border-radius: 3px;
-            background: #e0e0e0;
+            background: var(--border);
             outline: none;
             -webkit-appearance: none;
+            cursor: pointer;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: #667eea;
+            background: var(--primary);
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            width: 28px;
+            height: 28px;
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.5);
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: #667eea;
+            background: var(--primary);
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
         }
 
         .value-display {
-            min-width: 50px;
+            min-width: 80px;
             text-align: right;
             font-weight: 600;
-            color: #667eea;
+            color: var(--primary);
+            font-size: 18px;
+            letter-spacing: -0.5px;
         }
 
+        /* 按钮组 */
         .button-group {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 30px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                grid-template-columns: 1fr;
+            }
         }
 
         button {
-            padding: 14px 20px;
+            padding: 18px 24px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: -0.3px;
         }
 
-        .btn-generate {
+        .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             grid-column: 1 / -1;
+            font-size: 18px;
+            padding: 22px 24px;
         }
 
-        .btn-generate:hover {
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-generate:active {
-            transform: translateY(0);
-        }
-
-        .btn-generate:disabled {
+        .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
         }
 
-        .btn-download {
-            background: #f0f0f0;
-            color: #333;
-            border: 2px solid #e0e0e0;
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border);
         }
 
-        .btn-download:hover {
-            background: #e0e0e0;
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--border);
+            transform: translateY(-2px);
         }
 
-        .btn-preview {
-            background: #f0f0f0;
-            color: #333;
-            border: 2px solid #e0e0e0;
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .btn-preview:hover {
-            background: #e0e0e0;
-        }
-
+        /* 状态信息 */
         .status {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 14px;
+            padding: 20px 24px;
+            border-radius: 12px;
+            font-size: 15px;
             display: none;
+            margin-top: 20px;
+            animation: slideIn 0.3s ease-out;
+            font-weight: 500;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .status.show {
@@ -202,110 +367,229 @@
         }
 
         .status.loading {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: rgba(10, 132, 255, 0.1);
+            color: #0A84FF;
+            border: 1px solid rgba(10, 132, 255, 0.3);
         }
 
         .status.success {
-            background: #e8f5e9;
-            color: #388e3c;
+            background: rgba(52, 199, 89, 0.1);
+            color: #34C759;
+            border: 1px solid rgba(52, 199, 89, 0.3);
         }
 
         .status.error {
-            background: #ffebee;
-            color: #c62828;
+            background: rgba(255, 59, 48, 0.1);
+            color: #FF3B30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
         }
 
+        /* 音乐播放器 */
         .audio-player {
-            margin-top: 15px;
+            margin-top: 30px;
             display: none;
+            padding: 24px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            animation: slideIn 0.3s ease-out;
         }
 
         .audio-player.show {
             display: block;
         }
 
-        audio {
-            width: 100%;
-            margin-top: 10px;
+        .audio-player .player-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .info-box {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #666;
+        audio {
+            width: 100%;
+            height: 44px;
+            margin-top: 12px;
+        }
+
+        /* 信息框 */
+        .info-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .info-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .info-section p {
+            font-size: 15px;
+            color: var(--text-secondary);
             line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 60px 30px;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .main-card {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+                margin-bottom: 16px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .main-card {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .controls {
+                gap: 30px;
+            }
+
+            .button-group {
+                gap: 12px;
+            }
+
+            button {
+                padding: 16px 20px;
+                font-size: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎵 音乐伴奏生成器</h1>
-            <p>几个参数，生成原创伴奏</p>
-        </div>
+    <div class="wrapper">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="logo">♪ Beat Forge</div>
+        </nav>
 
-        <form id="form">
-            <!-- 音乐风格选择 -->
-            <div class="control-group">
-                <label>选择音乐风格</label>
-                <div class="style-buttons">
-                    <button type="button" class="style-btn active" data-style="rap">🎤 说唱</button>
-                    <button type="button" class="style-btn" data-style="electronic">⚡ 电子</button>
-                    <button type="button" class="style-btn" data-style="trap">🔊 Trap</button>
-                    <button type="button" class="style-btn" data-style="deep">🌊 深电子</button>
+        <!-- 主容器 -->
+        <div class="container">
+            <!-- 头部 -->
+            <div class="hero">
+                <h1>专业音乐伴奏生成器</h1>
+                <p>一键创作高质量的原创音乐伴奏</p>
+                <p class="subtitle">支持多种风格，完全可定制参数</p>
+            </div>
+
+            <!-- 主卡片 -->
+            <div class="main-card">
+                <form id="form">
+                    <!-- 音乐风格选择 -->
+                    <div class="control-group">
+                        <label><span class="icon">🎵</span>选择音乐风格</label>
+                        <div class="style-buttons">
+                            <button type="button" class="style-btn active" data-style="rap">
+                                <span>🎤</span> 说唱
+                            </button>
+                            <button type="button" class="style-btn" data-style="electronic">
+                                <span>⚡</span> 电子
+                            </button>
+                            <button type="button" class="style-btn" data-style="trap">
+                                <span>🔊</span> Trap
+                            </button>
+                            <button type="button" class="style-btn" data-style="deep">
+                                <span>🌊</span> 深电子
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 参数调整 -->
+                    <div class="controls">
+                        <div class="control-group">
+                            <label><span class="icon">🎚️</span>速度 (BPM)</label>
+                            <div class="slider-container">
+                                <input type="range" id="bpm" min="60" max="180" value="90" step="1">
+                                <div class="value-display"><span id="bpmValue">90</span></div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label><span class="icon">⏱️</span>长度</label>
+                            <div class="slider-container">
+                                <input type="range" id="length" min="30" max="300" value="60" step="10">
+                                <div class="value-display"><span id="lengthValue">60</span>s</div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label><span class="icon">💪</span>强度</label>
+                            <div class="slider-container">
+                                <input type="range" id="intensity" min="1" max="10" value="5" step="1">
+                                <div class="value-display"><span id="intensityValue">5</span>/10</div>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label><span class="icon">🎯</span>节奏模式</label>
+                            <div class="style-buttons">
+                                <button type="button" class="style-btn active" data-pattern="standard">
+                                    标准
+                                </button>
+                                <button type="button" class="style-btn" data-pattern="syncopated">
+                                    摇摆
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 按钮组 -->
+                    <div class="button-group">
+                        <button type="button" class="btn-secondary" id="previewBtn">🎧 预听</button>
+                        <button type="button" class="btn-secondary" id="downloadBtn" disabled>⬇️ 下载</button>
+                        <button type="submit" class="btn-primary" id="generateBtn">✨ 立即生成</button>
+                    </div>
+                </form>
+
+                <!-- 状态信息 -->
+                <div class="status" id="status"></div>
+
+                <!-- 音乐播放器 -->
+                <div class="audio-player" id="audioPlayer">
+                    <div class="player-label">🎵 播放预览</div>
+                    <audio id="audio" controls></audio>
                 </div>
             </div>
 
-            <!-- BPM调整 -->
-            <div class="control-group">
-                <label>速度 (BPM)</label>
-                <div class="slider-container">
-                    <input type="range" id="bpm" min="60" max="180" value="90" step="1">
-                    <div class="value-display"><span id="bpmValue">90</span> BPM</div>
-                </div>
+            <!-- 信息部分 -->
+            <div class="info-section">
+                <h3>💡 使用说明</h3>
+                <p>选择你喜欢的音乐风格和参数组合，点击「立即生成」开始创作。生成后可以实时预听效果，满意的话直接下载为MP3格式使用。</p>
+                <p>所有伴奏都是原创生成，可以用于短视频、直播、游戏等各种场景。</p>
             </div>
-
-            <!-- 长度调整 -->
-            <div class="control-group">
-                <label>长度</label>
-                <div class="slider-container">
-                    <input type="range" id="length" min="30" max="300" value="60" step="10">
-                    <div class="value-display"><span id="lengthValue">60</span>s</div>
-                </div>
-            </div>
-
-            <!-- 强度调整 -->
-            <div class="control-group">
-                <label>强度</label>
-                <div class="slider-container">
-                    <input type="range" id="intensity" min="1" max="10" value="5" step="1">
-                    <div class="value-display"><span id="intensityValue">5</span>/10</div>
-                </div>
-            </div>
-
-            <!-- 按钮组 -->
-            <div class="button-group">
-                <button type="button" class="btn-preview" id="previewBtn">🎧 预听</button>
-                <button type="button" class="btn-download" id="downloadBtn" disabled>⬇️ 下载MP3</button>
-                <button type="submit" class="btn-generate" id="generateBtn">✨ 生成伴奏</button>
-            </div>
-        </form>
-
-        <!-- 状态信息 -->
-        <div class="status" id="status"></div>
-
-        <!-- 音乐播放器 -->
-        <div class="audio-player" id="audioPlayer">
-            <audio id="audio" controls></audio>
-        </div>
-
-        <!-- 信息框 -->
-        <div class="info-box">
-            💡 <strong>提示：</strong>点击「生成伴奏」开始创作，生成后可预听或下载MP3文件。
         </div>
     </div>
 

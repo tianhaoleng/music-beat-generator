@@ -1,7 +1,9 @@
 // 全局状态
 let currentStyle = 'rap';
+let currentPattern = 'standard';
 let isGenerating = false;
 let currentAudio = null;
+let audioContext = null;
 
 // 获取DOM元素
 const form = document.getElementById('form');
@@ -18,30 +20,47 @@ const generateBtn = document.getElementById('generateBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const previewBtn = document.getElementById('previewBtn');
 const styleBtns = document.querySelectorAll('.style-btn');
+const patternBtns = document.querySelectorAll('[data-pattern]');
 
 // 音乐风格配置
 const styleConfig = {
     rap: {
-        drums: { kick: 0.8, snare: 0.6, hihat: 0.4 },
-        bass: { octave: 1, pattern: 'pulse' },
-        melody: { active: false }
+        baseFreq: 80,
+        kickIntensity: 0.8,
+        snareIntensity: 0.6,
+        hihatIntensity: 0.4,
+        bassPattern: 'pulse'
     },
     electronic: {
-        drums: { kick: 0.7, snare: 0.5, hihat: 0.5 },
-        bass: { octave: 1, pattern: 'wobble' },
-        melody: { active: true, notes: ['C3', 'D3', 'E3', 'G3'] }
+        baseFreq: 110,
+        kickIntensity: 0.7,
+        snareIntensity: 0.5,
+        hihatIntensity: 0.5,
+        bassPattern: 'wobble'
     },
     trap: {
-        drums: { kick: 0.9, snare: 0.7, hihat: 0.6 },
-        bass: { octave: 0, pattern: 'punch' },
-        melody: { active: false }
+        baseFreq: 70,
+        kickIntensity: 0.9,
+        snareIntensity: 0.7,
+        hihatIntensity: 0.6,
+        bassPattern: 'punch'
     },
     deep: {
-        drums: { kick: 0.6, snare: 0.4, hihat: 0.3 },
-        bass: { octave: 0, pattern: 'ambient' },
-        melody: { active: true, notes: ['A2', 'C3', 'D3'] }
+        baseFreq: 55,
+        kickIntensity: 0.6,
+        snareIntensity: 0.4,
+        hihatIntensity: 0.3,
+        bassPattern: 'ambient'
     }
 };
+
+// 初始化音频上下文
+function initAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+}
 
 // 更新数值显示
 bpmInput.addEventListener('input', (e) => {
@@ -58,11 +77,25 @@ intensityInput.addEventListener('input', (e) => {
 
 // 风格选择
 styleBtns.forEach(btn => {
+    if (btn.dataset.style) {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            styleBtns.forEach(b => {
+                if (b.dataset.style) b.classList.remove('active');
+            });
+            btn.classList.add('active');
+            currentStyle = btn.dataset.style;
+        });
+    }
+});
+
+// 节奏模式选择
+patternBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        styleBtns.forEach(b => b.classList.remove('active'));
+        patternBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentStyle = btn.dataset.style;
+        currentPattern = btn.dataset.pattern;
     });
 });
 
@@ -81,7 +114,7 @@ async function generateMusic() {
 
     isGenerating = true;
     generateBtn.disabled = true;
-    showStatus('正在生成伴奏...', 'loading');
+    showStatus('⏳ 正在生成伴奏...', 'loading');
 
     try {
         const bpm = parseInt(bpmInput.value);
@@ -89,25 +122,17 @@ async function generateMusic() {
         const intensity = parseInt(intensityInput.value) / 10;
         const style = currentStyle;
 
-        // 启动Tone
-        await Tone.start();
-        Tone.Transport.bpm.value = bpm;
+        // 生成音频
+        const audioBlob = await generateAudioBlob(bpm, length, intensity, style);
 
-        // 创建音频上下文
-        const offlineContext = new OfflineAudioContext(2, 44100 * length, 44100);
-        const offlineOscillator = offlineContext.createOscillator();
-        const offlineGain = offlineContext.createGain();
+        if (!audioBlob) {
+            throw new Error('音频生成失败');
+        }
 
-        offlineOscillator.connect(offlineGain);
-        offlineGain.connect(offlineContext.destination);
+        // 创建可播放的URL
+        currentAudio = URL.createObjectURL(audioBlob);
 
-        // 根据风格生成不同的模式
-        await generateByStyle(bpm, length, intensity, style);
-
-        // 立即生成简单的示例音频（实际项目中会更复杂）
-        currentAudio = generateSimpleAudio(bpm, length, style, intensity);
-
-        // 显示音频
+        // 显示音频播放器
         audio.src = currentAudio;
         audioPlayer.classList.add('show');
         downloadBtn.disabled = false;
@@ -115,78 +140,75 @@ async function generateMusic() {
         showStatus('✅ 伴奏生成成功！', 'success');
     } catch (error) {
         console.error('生成失败:', error);
-        showStatus('❌ 生成失败，请重试', 'error');
+        showStatus('❌ 生成失败：' + error.message, 'error');
     } finally {
         isGenerating = false;
         generateBtn.disabled = false;
     }
 }
 
-// 根据风格生成音乐（示例函数）
-async function generateByStyle(bpm, length, intensity, style) {
-    // 这里是实现音乐生成的核心逻辑
-    // 实际项目中会根据风格参数生成不同的鼓点、贝斯和旋律
-    const beatTime = (60 / bpm) * 4; // 一个小节的时长
-    const numBeats = Math.floor(length / beatTime);
+// 生成音频Blob
+async function generateAudioBlob(bpm, length, intensity, style) {
+    try {
+        const ctx = initAudioContext();
+        const sampleRate = ctx.sampleRate;
+        const numberOfSamples = sampleRate * length;
+        const audioBuffer = ctx.createBuffer(2, numberOfSamples, sampleRate);
+        const left = audioBuffer.getChannelData(0);
+        const right = audioBuffer.getChannelData(1);
 
-    const config = styleConfig[style];
+        const config = styleConfig[style];
+        const beatDuration = 60 / bpm;
+        const beatSamples = beatDuration * sampleRate;
 
-    // 模拟音乐生成过程
-    console.log(`生成 ${style} 风格，BPM: ${bpm}, 长度: ${length}秒, 强度: ${intensity}`);
-    console.log('配置:', config);
-}
+        // 生成鼓点和低音
+        for (let i = 0; i < numberOfSamples; i++) {
+            const beatPosition = (i % beatSamples) / beatSamples;
+            let sample = 0;
 
-// 生成简单音频（使用Web Audio API）
-function generateSimpleAudio(bpm, length, style, intensity) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const sampleRate = audioContext.sampleRate;
-    const numberOfSamples = sampleRate * length;
-    const audioBuffer = audioContext.createBuffer(2, numberOfSamples, sampleRate);
-    const left = audioBuffer.getChannelData(0);
-    const right = audioBuffer.getChannelData(1);
+            // 大鼓（低频）
+            if (beatPosition < 0.15) {
+                const kickFreq = config.baseFreq * Math.exp(-beatPosition * 15);
+                sample += Math.sin(2 * Math.PI * (i / sampleRate) * kickFreq) * 
+                          config.kickIntensity * 0.6 * intensity * 
+                          Math.exp(-beatPosition * 8);
+            }
 
-    // 生成简单的鼓点和低音模式
-    const beatDuration = 60 / bpm; // 秒
-    const beatSamples = beatDuration * sampleRate;
+            // 小鼓（中高频打击）
+            if ((beatPosition > 0.45 && beatPosition < 0.55) || 
+                (beatPosition > 0.95 && beatPosition < 1.05)) {
+                sample += (Math.random() * 2 - 1) * config.snareIntensity * 0.4 * intensity;
+            }
 
-    // 生成鼓点
-    for (let i = 0; i < numberOfSamples; i++) {
-        const beatPosition = (i % beatSamples) / beatSamples;
+            // 高帽（高频）
+            if (beatPosition % 0.25 < 0.08) {
+                sample += (Math.random() * 2 - 1) * config.hihatIntensity * 0.3 * intensity;
+            }
 
-        // 大鼓（低频）
-        if (beatPosition < 0.1) {
-            const kickFreq = 150 * Math.exp(-beatPosition * 10) * intensity;
-            left[i] += Math.sin(2 * Math.PI * (kickFreq / sampleRate) * i) * 0.5 * Math.exp(-beatPosition * 5);
-            right[i] += left[i];
+            // 低音线
+            const bassFreq = config.baseFreq * (1 + Math.sin(beatPosition * Math.PI) * 0.3);
+            sample += Math.sin(2 * Math.PI * (i / sampleRate) * bassFreq) * 
+                      0.15 * config.kickIntensity * intensity;
+
+            // 限制动态范围
+            sample = Math.max(-1, Math.min(1, sample)) * 0.8;
+
+            left[i] = sample;
+            right[i] = sample * (0.95 + Math.random() * 0.1); // 轻微立体声处理
         }
 
-        // 小鼓（高频脉冲）
-        if (beatPosition > 0.5 && beatPosition < 0.55) {
-            left[i] += Math.random() * 0.3 * intensity;
-            right[i] += left[i];
-        }
+        // 转换为WAV
+        const wav = encodeWAV(audioBuffer, sampleRate);
+        return new Blob([wav], { type: 'audio/wav' });
 
-        // 低音
-        if (beatPosition < 0.8) {
-            const bassFreq = (style === 'deep' ? 40 : 60) * (1 + Math.sin(beatPosition * Math.PI) * 0.5);
-            left[i] += Math.sin(2 * Math.PI * (bassFreq / sampleRate) * i) * 0.2 * intensity;
-            right[i] += left[i];
-        }
+    } catch (error) {
+        console.error('音频生成错误:', error);
+        throw error;
     }
-
-    // 转换为Blob
-    const offlineContext = new OfflineAudioContext(2, numberOfSamples, sampleRate);
-    const source = offlineContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(offlineContext.destination);
-    source.start(0);
-
-    return encodeWAVtoMP3(audioBuffer, sampleRate);
 }
 
-// 简单的WAV编码函数（实际项目会使用mp3库）
-function encodeWAVtoMP3(audioBuffer, sampleRate) {
-    // 这里使用WAV格式作为临时方案
+// WAV编码
+function encodeWAV(audioBuffer, sampleRate) {
     const left = audioBuffer.getChannelData(0);
     const right = audioBuffer.getChannelData(1);
     const interleaved = new Float32Array(left.length * 2);
@@ -196,56 +218,36 @@ function encodeWAVtoMP3(audioBuffer, sampleRate) {
         interleaved[i * 2 + 1] = right[i];
     }
 
-    const wav = encodeWAV(interleaved, sampleRate);
-    const blob = new Blob([wav], { type: 'audio/wav' });
-    return URL.createObjectURL(blob);
-}
-
-// WAV编码函数
-function encodeWAV(samples, sampleRate) {
-    const buffer = new ArrayBuffer(44 + samples.length * 2);
+    const buffer = new ArrayBuffer(44 + interleaved.length * 2);
     const view = new DataView(buffer);
 
+    // WAV文件头
     const writeString = (offset, string) => {
         for (let i = 0; i < string.length; i++) {
             view.setUint8(offset + i, string.charCodeAt(i));
         }
     };
 
-    const writeFloat = (offset, value) => {
-        view.setFloat32(offset, value, true);
-    };
-
-    const writeShort = (offset, value) => {
-        view.setInt16(offset, value, true);
-    };
-
-    // WAV文件头
     writeString(0, 'RIFF');
-    view.setUint32(4, 36 + samples.length * 2, true);
+    view.setUint32(4, 36 + interleaved.length * 2, true);
     writeString(8, 'WAVE');
     writeString(12, 'fmt ');
     view.setUint32(16, 16, true);
-    writeShort(20, 1);
-    writeShort(22, 2);
+    view.setInt16(20, 1, true);
+    view.setInt16(22, 2, true);
     view.setUint32(24, sampleRate, true);
     view.setUint32(28, sampleRate * 4, true);
-    writeShort(32, 4);
-    writeShort(34, 16);
+    view.setInt16(32, 4, true);
+    view.setInt16(34, 16, true);
     writeString(36, 'data');
-    view.setUint32(40, samples.length * 2, true);
+    view.setUint32(40, interleaved.length * 2, true);
 
-    // 写入样本
-    const volume = 0.8;
     let index = 44;
-    const length = samples.length;
-    let s = 0;
-    while (index < buffer.byteLength) {
-        s = Math.max(-1, Math.min(1, samples[length]));
-        s = s < 0 ? s * 0x8000 : s * 0x7FFF;
-        view.setInt16(index, s, true);
+    const volume = 0.8;
+    for (let i = 0; i < interleaved.length; i++) {
+        let s = Math.max(-1, Math.min(1, interleaved[i])) * volume;
+        view.setInt16(index, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
         index += 2;
-        length++;
     }
 
     return buffer;
@@ -255,9 +257,12 @@ function encodeWAV(samples, sampleRate) {
 previewBtn.addEventListener('click', (e) => {
     e.preventDefault();
     if (currentAudio) {
-        audio.play();
+        audio.play().catch(err => {
+            console.error('播放失败:', err);
+            showStatus('❌ 播放失败', 'error');
+        });
     } else {
-        showStatus('请先生成伴奏', 'error');
+        showStatus('⚠️ 请先生成伴奏', 'error');
     }
 });
 
@@ -267,9 +272,11 @@ downloadBtn.addEventListener('click', (e) => {
     if (currentAudio) {
         const link = document.createElement('a');
         link.href = currentAudio;
-        link.download = `music_${currentStyle}_${new Date().getTime()}.wav`;
+        link.download = `beat_${currentStyle}_${new Date().getTime()}.wav`;
         link.click();
         showStatus('✅ 下载成功！', 'success');
+    } else {
+        showStatus('⚠️ 没有可下载的文件', 'error');
     }
 });
 
@@ -279,4 +286,4 @@ form.addEventListener('submit', (e) => {
     generateMusic();
 });
 
-console.log('🎵 音乐伴奏生成器已加载');
+console.log('🎵 Beat Forge 已加载完成');
