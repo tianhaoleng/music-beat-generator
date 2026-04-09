@@ -13,17 +13,11 @@
 
         :root {
             --primary: #007AFF;
-            --primary-light: #0A84FF;
-            --secondary: #5AC8FA;
             --bg-primary: #ffffff;
             --bg-secondary: #f5f5f7;
-            --bg-tertiary: #ececf1;
             --text-primary: #000000;
             --text-secondary: #86868b;
             --border: #e5e5ea;
-            --success: #34C759;
-            --warning: #FF9500;
-            --danger: #FF3B30;
         }
 
         body {
@@ -37,15 +31,12 @@
             height: 70px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 0 50px;
             border-bottom: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
         .logo {
@@ -78,16 +69,10 @@
             background-clip: text;
         }
 
-        .hero p {
-            font-size: 16px;
-            color: var(--text-secondary);
-        }
-
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 380px;
             gap: 30px;
-            margin-bottom: 30px;
         }
 
         @media (max-width: 1200px) {
@@ -104,20 +89,6 @@
             border: 1px solid var(--border);
         }
 
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .sidebar-card {
-            background: var(--bg-primary);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border);
-        }
-
         .section {
             margin-bottom: 40px;
             padding-bottom: 40px;
@@ -126,18 +97,12 @@
 
         .section:last-child {
             border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
         }
 
         .section-title {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 20px;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .button-grid {
@@ -154,21 +119,18 @@
             cursor: pointer;
             font-weight: 500;
             font-size: 13px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
 
         .btn-style:hover {
             border-color: var(--primary);
             background: rgba(0, 122, 255, 0.08);
-            transform: translateY(-2px);
         }
 
         .btn-style.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
         }
 
         .instrument-group {
@@ -198,12 +160,10 @@
             font-size: 12px;
             font-weight: 500;
             transition: all 0.2s ease;
-            color: var(--text-primary);
         }
 
         .instrument-btn:hover {
             border-color: var(--primary);
-            background: rgba(0, 122, 255, 0.08);
         }
 
         .instrument-btn.active {
@@ -229,9 +189,7 @@
             height: 6px;
             border-radius: 3px;
             background: var(--border);
-            outline: none;
             -webkit-appearance: none;
-            cursor: pointer;
         }
 
         input[type="range"]::-webkit-slider-thumb {
@@ -241,17 +199,6 @@
             border-radius: 50%;
             background: var(--primary);
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
         }
 
         .button-group-main {
@@ -263,12 +210,6 @@
             border-top: 1px solid var(--border);
         }
 
-        @media (max-width: 768px) {
-            .button-group-main {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .btn-primary {
             padding: 16px 24px;
             border: none;
@@ -278,7 +219,6 @@
             cursor: pointer;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             grid-column: 1 / -1;
         }
 
@@ -287,31 +227,13 @@
             box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
         .btn-secondary {
             padding: 14px 20px;
             border: 1.5px solid var(--border);
             background: var(--bg-secondary);
             border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
             cursor: pointer;
-            color: var(--text-primary);
-            transition: all 0.2s ease;
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--border);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            font-weight: 500;
         }
 
         .status {
@@ -320,41 +242,15 @@
             font-size: 14px;
             margin-top: 20px;
             display: none;
-            font-weight: 500;
         }
 
         .status.show {
             display: block;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .status.loading {
-            background: rgba(10, 132, 255, 0.1);
-            color: #0A84FF;
-            border: 1px solid rgba(10, 132, 255, 0.3);
         }
 
         .status.success {
             background: rgba(52, 199, 89, 0.1);
             color: #34C759;
-            border: 1px solid rgba(52, 199, 89, 0.3);
-        }
-
-        .status.error {
-            background: rgba(255, 59, 48, 0.1);
-            color: #FF3B30;
-            border: 1px solid rgba(255, 59, 48, 0.3);
         }
 
         .audio-player {
@@ -369,79 +265,137 @@
             display: block;
         }
 
-        .audio-player label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
         audio {
             width: 100%;
-            height: 40px;
         }
 
-        .sidebar-title {
-            font-weight: 600;
-            margin-bottom: 16px;
-            font-size: 15px;
-            color: var(--text-primary);
-        }
-
-        .preset-btn {
-            padding: 10px 12px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-
-        .preset-btn:hover {
-            background: var(--border);
-            transform: translateY(-1px);
-        }
-
-        .info-text {
-            font-size: 12px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .stat-item {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .stat-item strong {
-            color: var(--primary);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-            }
-
-            .main-card {
-                padding: 30px 20px;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .button-grid {
-                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            }
-        }
+        .sidebar { display: none; }
     </style>
 </head>
-<body>\n    <nav class=\"navbar\">\n        <div class=\"logo\">♪ Beat Forge Pro</div>\n    </nav>\n\n    <div class=\"container\">\n        <div class=\"hero\">\n            <h1>专业音乐伴奏生成器</h1>\n            <p>15+风格 | 9种乐器 | 预设模板 | 情绪控制 | 无限组合</p>\n        </div>\n\n        <div class=\"main-layout\">\n            <div class=\"main-card\">\n                <form id=\"form\">\n                    <!-- 乐器选择 - 优先级1 -->\n                    <div class=\"section\">\n                        <div class=\"section-title\">🎸 乐器选择（优先级1）</div>\n\n                        <div class=\"instrument-group\">\n                            <span class=\"instrument-label\">节奏层</span>\n                            <div class=\"instrument-buttons\">\n                                <button type=\"button\" class=\"instrument-btn active\" data-instrument=\"kick\">大鼓</button>\n                                <button type=\"button\" class=\"instrument-btn active\" data-instrument=\"snare\">小鼓</button>\n                                <button type=\"button\" class=\"instrument-btn active\" data-instrument=\"hihat\">高帽</button>\n                            </div>\n                        </div>\n\n                        <div class=\"instrument-group\">\n                            <span class=\"instrument-label\">和声层</span>\n                            <div class=\"instrument-buttons\">\n                                <button type=\"button\" class=\"instrument-btn\" data-instrument=\"piano\">钢琴</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-instrument=\"guitar\">吉他</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-instrument=\"strings\">弦乐</button>\n                            </div>\n                        </div>\n\n                        <div class=\"instrument-group\">\n                            <span class=\"instrument-label\">低音层</span>\n                            <div class=\"instrument-buttons\">\n                                <button type=\"button\" class=\"instrument-btn active\" data-instrument=\"bass\">贝斯</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-instrument=\"synth-bass\">合成Bass</button>\n                            </div>\n                        </div>\n\n                        <div class=\"instrument-group\">\n                            <span class=\"instrument-label\">氛围层</span>\n                            <div class=\"instrument-buttons\">\n                                <button type=\"button\" class=\"instrument-btn\" data-instrument=\"pad\">Pad</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-instrument=\"organ\">风琴</button>\n                            </div>\n                        </div>\n                    </div>\n\n                    <!-- 风格选择 - 优先级4 -->\n                    <div class=\"section\">\n                        <div class=\"section-title\">🎵 音乐风格（优先级4）</div>\n                        <div class=\"button-grid\">\n                            <button type=\"button\" class=\"btn-style active\" data-style=\"rap\">说唱</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"rnb\">R&B</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"jazz\">爵士</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"rock\">摇滚</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"folk\">民谣</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"kpop\">K-pop</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"pop\">流行</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"classical\">古典</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"electronic\">电子</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"trap\">Trap</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"funk\">放克</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"soul\">灵魂乐</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"disco\">迪斯科</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"reggae\">雷鬼</button>\n                            <button type=\"button\" class=\"btn-style\" data-style=\"latin\">Latin</button>\n                        </div>\n                    </div>\n\n                    <!-- 预设模板库 - 优先级2 -->\n                    <div class=\"section\">\n                        <div class=\"section-title\">📋 预设模板（优先级2）</div>\n                        <div class=\"button-grid\">\n                            <button type=\"button\" class=\"btn-style\" data-preset=\"smooth\">柔和</button>\n                            <button type=\"button\" class=\"btn-style\" data-preset=\"powerful\">强力</button>\n                            <button type=\"button\" class=\"btn-style\" data-preset=\"energetic\">活力</button>\n                            <button type=\"button\" class=\"btn-style\" data-preset=\"minimal\">极简</button>\n                            <button type=\"button\" class=\"btn-style\" data-preset=\"rich\">丰富</button>\n                        </div>\n                    </div>\n\n                    <!-- 高级参数 - 优先级3 -->\n                    <div class=\"section\">\n                        <div class=\"section-title\">⚙️ 高级参数（优先级3）</div>\n\n                        <div class=\"slider-container\">\n                            <div class=\"slider-label\">\n                                <span>速度 (BPM)</span>\n                                <span id=\"bpmValue\">90</span>\n                            </div>\n                            <input type=\"range\" id=\"bpm\" min=\"60\" max=\"180\" value=\"90\" step=\"1\">\n                        </div>\n\n                        <div class=\"slider-container\">\n                            <div class=\"slider-label\">\n                                <span>长度</span>\n                                <span id=\"lengthValue\">60</span>s\n                            </div>\n                            <input type=\"range\" id=\"length\" min=\"30\" max=\"300\" value=\"60\" step=\"10\">\n                        </div>\n\n                        <div class=\"slider-container\">\n                            <div class=\"slider-label\">\n                                <span>强度</span>\n                                <span id=\"intensityValue\">5</span>/10\n                            </div>\n                            <input type=\"range\" id=\"intensity\" min=\"1\" max=\"10\" value=\"5\" step=\"1\">\n                        </div>\n\n                        <div class=\"instrument-group\">\n                            <span class=\"instrument-label\">情绪</span>\n                            <div class=\"instrument-buttons\">\n                                <button type=\"button\" class=\"instrument-btn active\" data-mood=\"neutral\">中性</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-mood=\"happy\">欢快</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-mood=\"sad\">忧郁</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-mood=\"intense\">紧张</button>\n                            </div>\n                        </div>\n\n                        <div class=\"instrument-group\">\n                            <span class=\"instrument-label\">强度曲线</span>\n                            <div class=\"instrument-buttons\">\n                                <button type=\"button\" class=\"instrument-btn active\" data-curve=\"flat\">恒定</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-curve=\"crescendo\">渐强</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-curve=\"decrescendo\">渐弱</button>\n                                <button type=\"button\" class=\"instrument-btn\" data-curve=\"wave\">波浪</button>\n                            </div>\n                        </div>\n                    </div>\n\n                    <!-- 按钮 -->\n                    <div class=\"button-group-main\">\n                        <button type=\"button\" class=\"btn-secondary\" id=\"previewBtn\">🎧 预听</button>\n                        <button type=\"button\" class=\"btn-secondary\" id=\"downloadBtn\" disabled>⬇️ 下载</button>\n                        <button type=\"submit\" class=\"btn-primary\" id=\"generateBtn\">✨ 立即生成</button>\n                    </div>\n                </form>\n\n                <div class=\"status\" id=\"status\"></div>\n\n                <div class=\"audio-player\" id=\"audioPlayer\">\n                    <label>🎵 播放预览</label>\n                    <audio id=\"audio\" controls></audio>\n                </div>\n            </div>\n\n            <!-- 侧边栏 -->\n            <div class=\"sidebar\">\n                <div class=\"sidebar-card\">\n                    <div class=\"sidebar-title\">⚡ 快速预设</div>\n                    <button type=\"button\" class=\"preset-btn\" onclick=\"applyQuickPreset('rap-boom')\">说唱Boom Bap</button>\n                    <button type=\"button\" class=\"preset-btn\" onclick=\"applyQuickPreset('rnb-smooth')\">R&B柔和</button>\n                    <button type=\"button\" class=\"preset-btn\" onclick=\"applyQuickPreset('jazz-cool')\">爵士Cool</button>\n                    <button type=\"button\" class=\"preset-btn\" onclick=\"applyQuickPreset('rock-power')\">摇滚力量</button>\n                    <button type=\"button\" class=\"preset-btn\" onclick=\"applyQuickPreset('electronic-dance')\">电子舞曲</button>\n                </div>\n\n                <div class=\"sidebar-card\">\n                    <div class=\"sidebar-title\">📊 功能统计</div>\n                    <div class=\"stat-item\">✓ <strong>15+</strong> 音乐风格</div>\n                    <div class=\"stat-item\">✓ <strong>9</strong> 种乐器选择</div>\n                    <div class=\"stat-item\">✓ <strong>5</strong> 个预设模板</div>\n                    <div class=\"stat-item\">✓ <strong>4</strong> 种情绪模式</div>\n                    <div class=\"stat-item\">✓ <strong>4</strong> 种强度曲线</div>\n                    <div class=\"stat-item\">✓ <strong>无限</strong> 组合</div>\n                </div>\n\n                <div class=\"sidebar-card\">\n                    <div class=\"sidebar-title\">💡 使用提示</div>\n                    <p class=\"info-text\">1. 先选择乐器组合，2. 选择风格，3. 调整参数，4. 点击生成。每次都会产生独特的伴奏！</p>\n                </div>\n            </div>\n        </div>\n    </div>\n\n    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js\"></script>\n    <script src=\"app.js\"></script>\n</body>\n</html>
+<body>
+    <nav class="navbar">
+        <div class="logo">♪ Beat Forge Pro</div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>专业音乐伴奏生成器</h1>
+            <p>15+风格 | 9种乐器 | 情绪控制 | 强度曲线</p>
+        </div>
+
+        <div class="main-card">
+            <form id="form">
+                <!-- 乐器选择 -->
+                <div class="section">
+                    <div class="section-title">🎸 乐器选择</div>
+                    <div class="instrument-group">
+                        <span class="instrument-label">节奏层</span>
+                        <div class="instrument-buttons">
+                            <button type="button" class="instrument-btn active" data-instrument="kick">大鼓</button>
+                            <button type="button" class="instrument-btn active" data-instrument="snare">小鼓</button>
+                            <button type="button" class="instrument-btn active" data-instrument="hihat">高帽</button>
+                        </div>
+                    </div>
+                    <div class="instrument-group">
+                        <span class="instrument-label">和声层</span>
+                        <div class="instrument-buttons">
+                            <button type="button" class="instrument-btn" data-instrument="piano">钢琴</button>
+                            <button type="button" class="instrument-btn" data-instrument="guitar">吉他</button>
+                            <button type="button" class="instrument-btn" data-instrument="strings">弦乐</button>
+                        </div>
+                    </div>
+                    <div class="instrument-group">
+                        <span class="instrument-label">低音层</span>
+                        <div class="instrument-buttons">
+                            <button type="button" class="instrument-btn active" data-instrument="bass">贝斯</button>
+                            <button type="button" class="instrument-btn" data-instrument="synth-bass">合成Bass</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 风格选择 -->
+                <div class="section">
+                    <div class="section-title">🎵 音乐风格</div>
+                    <div class="button-grid">
+                        <button type="button" class="btn-style active" data-style="rap">说唱</button>
+                        <button type="button" class="btn-style" data-style="rnb">R&B</button>
+                        <button type="button" class="btn-style" data-style="jazz">爵士</button>
+                        <button type="button" class="btn-style" data-style="rock">摇滚</button>
+                        <button type="button" class="btn-style" data-style="folk">民谣</button>
+                        <button type="button" class="btn-style" data-style="kpop">K-pop</button>
+                        <button type="button" class="btn-style" data-style="pop">流行</button>
+                        <button type="button" class="btn-style" data-style="classical">古典</button>
+                        <button type="button" class="btn-style" data-style="electronic">电子</button>
+                        <button type="button" class="btn-style" data-style="trap">Trap</button>
+                        <button type="button" class="btn-style" data-style="funk">放克</button>
+                        <button type="button" class="btn-style" data-style="soul">灵魂乐</button>
+                        <button type="button" class="btn-style" data-style="disco">迪斯科</button>
+                        <button type="button" class="btn-style" data-style="reggae">雷鬼</button>
+                        <button type="button" class="btn-style" data-style="latin">Latin</button>
+                    </div>
+                </div>
+
+                <!-- 高级参数 -->
+                <div class="section">
+                    <div class="section-title">⚙️ 高级参数</div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>速度 (BPM)</span>
+                            <span id="bpmValue">90</span>
+                        </div>
+                        <input type="range" id="bpm" min="60" max="180" value="90" step="1">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>长度</span>
+                            <span id="lengthValue">60</span>s
+                        </div>
+                        <input type="range" id="length" min="30" max="300" value="60" step="10">
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>强度</span>
+                            <span id="intensityValue">5</span>/10
+                        </div>
+                        <input type="range" id="intensity" min="1" max="10" value="5" step="1">
+                    </div>
+                    <div class="instrument-group">
+                        <span class="instrument-label">情绪</span>
+                        <div class="instrument-buttons">
+                            <button type="button" class="instrument-btn active" data-mood="neutral">中性</button>
+                            <button type="button" class="instrument-btn" data-mood="happy">欢快</button>
+                            <button type="button" class="instrument-btn" data-mood="sad">忧郁</button>
+                            <button type="button" class="instrument-btn" data-mood="intense">紧张</button>
+                        </div>
+                    </div>
+                    <div class="instrument-group">
+                        <span class="instrument-label">强度曲线</span>
+                        <div class="instrument-buttons">
+                            <button type="button" class="instrument-btn active" data-curve="flat">恒定</button>
+                            <button type="button" class="instrument-btn" data-curve="crescendo">渐强</button>
+                            <button type="button" class="instrument-btn" data-curve="decrescendo">渐弱</button>
+                            <button type="button" class="instrument-btn" data-curve="wave">波浪</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 按钮 -->
+                <div class="button-group-main">
+                    <button type="button" class="btn-secondary" id="previewBtn">🎧 预听</button>
+                    <button type="button" class="btn-secondary" id="downloadBtn" disabled>⬇️ 下载</button>
+                    <button type="submit" class="btn-primary" id="generateBtn">✨ 立即生成</button>
+                </div>
+            </form>
+
+            <div class="status" id="status"></div>
+            <div class="audio-player" id="audioPlayer">
+                <label>🎵 播放预览</label>
+                <audio id="audio" controls></audio>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
