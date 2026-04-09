@@ -3,399 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beat Forge Pro - 专业音乐伴奏生成器</title>
+    <title>Beat Forge Pro</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #007AFF;
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f7;
-            --text-primary: #000000;
-            --text-secondary: #86868b;
-            --border: #e5e5ea;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        .navbar {
-            height: 70px;
-            display: flex;
-            align-items: center;
-            padding: 0 50px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.98);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 50px 40px;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .hero h1 {
-            font-size: 52px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 30px;
-        }
-
-        @media (max-width: 1200px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .main-card {
-            background: var(--bg-primary);
-            border-radius: 24px;
-            padding: 50px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid var(--border);
-        }
-
-        .section {
-            margin-bottom: 40px;
-            padding-bottom: 40px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section:last-child {
-            border-bottom: none;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 12px;
-        }
-
-        .btn-style {
-            padding: 12px 14px;
-            border: 2px solid var(--border);
-            background: var(--bg-secondary);
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 13px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-style:hover {
-            border-color: var(--primary);
-            background: rgba(0, 122, 255, 0.08);
-        }
-
-        .btn-style.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .instrument-group {
-            margin-bottom: 16px;
-        }
-
-        .instrument-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .instrument-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .instrument-btn {
-            padding: 8px 12px;
-            border: 1.5px solid var(--border);
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .instrument-btn:hover {
-            border-color: var(--primary);
-        }
-
-        .instrument-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .slider-container {
-            margin-bottom: 24px;
-        }
-
-        .slider-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--border);
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-        }
-
-        .button-group-main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn-primary {
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            grid-column: 1 / -1;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            padding: 14px 20px;
-            border: 1.5px solid var(--border);
-            background: var(--bg-secondary);
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .status {
-            padding: 16px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .status.show {
-            display: block;
-        }
-
-        .status.success {
-            background: rgba(52, 199, 89, 0.1);
-            color: #34C759;
-        }
-
-        .audio-player {
-            margin-top: 20px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            display: none;
-        }
-
-        .audio-player.show {
-            display: block;
-        }
-
-        audio {
-            width: 100%;
-        }
-
-        .sidebar { display: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI'; background: #f5f5f7; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 40px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card { background: white; border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .section { margin-bottom: 30px; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; }
+        button { padding: 10px; border: 2px solid #e5e5ea; background: #f5f5f7; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.2s; }
+        button:hover { border-color: #007AFF; background: rgba(0,122,255,0.08); }
+        button.active { background: #007AFF; color: white; border-color: #007AFF; }
+        .slider { width: 100%; margin: 10px 0; }
+        .slider-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+        .button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .btn-primary { grid-column: 1/-1; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 14px; font-size: 14px; font-weight: 600; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.3); }
+        .status { margin-top: 20px; padding: 12px; border-radius: 8px; display: none; font-size: 12px; }
+        .status.show { display: block; }
+        .status.success { background: rgba(52,199,89,0.1); color: #34C759; }
+        .status.error { background: rgba(255,59,48,0.1); color: #FF3B30; }
+        audio { width: 100%; margin-top: 15px; display: none; }
+        audio.show { display: block; }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">♪ Beat Forge Pro</div>
-    </nav>
-
     <div class="container">
-        <div class="hero">
-            <h1>专业音乐伴奏生成器</h1>
-            <p>15+风格 | 9种乐器 | 情绪控制 | 强度曲线</p>
-        </div>
-
-        <div class="main-card">
+        <h1>♪ Beat Forge Pro - 音乐伴奏生成器</h1>
+        <div class="card">
             <form id="form">
-                <!-- 乐器选择 -->
                 <div class="section">
-                    <div class="section-title">🎸 乐器选择</div>
-                    <div class="instrument-group">
-                        <span class="instrument-label">节奏层</span>
-                        <div class="instrument-buttons">
-                            <button type="button" class="instrument-btn active" data-instrument="kick">大鼓</button>
-                            <button type="button" class="instrument-btn active" data-instrument="snare">小鼓</button>
-                            <button type="button" class="instrument-btn active" data-instrument="hihat">高帽</button>
-                        </div>
-                    </div>
-                    <div class="instrument-group">
-                        <span class="instrument-label">和声层</span>
-                        <div class="instrument-buttons">
-                            <button type="button" class="instrument-btn" data-instrument="piano">钢琴</button>
-                            <button type="button" class="instrument-btn" data-instrument="guitar">吉他</button>
-                            <button type="button" class="instrument-btn" data-instrument="strings">弦乐</button>
-                        </div>
-                    </div>
-                    <div class="instrument-group">
-                        <span class="instrument-label">低音层</span>
-                        <div class="instrument-buttons">
-                            <button type="button" class="instrument-btn active" data-instrument="bass">贝斯</button>
-                            <button type="button" class="instrument-btn" data-instrument="synth-bass">合成Bass</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 风格选择 -->
-                <div class="section">
-                    <div class="section-title">🎵 音乐风格</div>
+                    <div class="section-title">🎵 选择风格</div>
                     <div class="button-grid">
                         <button type="button" class="btn-style active" data-style="rap">说唱</button>
                         <button type="button" class="btn-style" data-style="rnb">R&B</button>
                         <button type="button" class="btn-style" data-style="jazz">爵士</button>
                         <button type="button" class="btn-style" data-style="rock">摇滚</button>
                         <button type="button" class="btn-style" data-style="folk">民谣</button>
-                        <button type="button" class="btn-style" data-style="kpop">K-pop</button>
                         <button type="button" class="btn-style" data-style="pop">流行</button>
-                        <button type="button" class="btn-style" data-style="classical">古典</button>
                         <button type="button" class="btn-style" data-style="electronic">电子</button>
                         <button type="button" class="btn-style" data-style="trap">Trap</button>
-                        <button type="button" class="btn-style" data-style="funk">放克</button>
-                        <button type="button" class="btn-style" data-style="soul">灵魂乐</button>
-                        <button type="button" class="btn-style" data-style="disco">迪斯科</button>
-                        <button type="button" class="btn-style" data-style="reggae">雷鬼</button>
-                        <button type="button" class="btn-style" data-style="latin">Latin</button>
                     </div>
                 </div>
 
-                <!-- 高级参数 -->
                 <div class="section">
-                    <div class="section-title">⚙️ 高级参数</div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>速度 (BPM)</span>
-                            <span id="bpmValue">90</span>
-                        </div>
-                        <input type="range" id="bpm" min="60" max="180" value="90" step="1">
-                    </div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>长度</span>
-                            <span id="lengthValue">60</span>s
-                        </div>
-                        <input type="range" id="length" min="30" max="300" value="60" step="10">
-                    </div>
-                    <div class="slider-container">
-                        <div class="slider-label">
-                            <span>强度</span>
-                            <span id="intensityValue">5</span>/10
-                        </div>
-                        <input type="range" id="intensity" min="1" max="10" value="5" step="1">
-                    </div>
-                    <div class="instrument-group">
-                        <span class="instrument-label">情绪</span>
-                        <div class="instrument-buttons">
-                            <button type="button" class="instrument-btn active" data-mood="neutral">中性</button>
-                            <button type="button" class="instrument-btn" data-mood="happy">欢快</button>
-                            <button type="button" class="instrument-btn" data-mood="sad">忧郁</button>
-                            <button type="button" class="instrument-btn" data-mood="intense">紧张</button>
-                        </div>
-                    </div>
-                    <div class="instrument-group">
-                        <span class="instrument-label">强度曲线</span>
-                        <div class="instrument-buttons">
-                            <button type="button" class="instrument-btn active" data-curve="flat">恒定</button>
-                            <button type="button" class="instrument-btn" data-curve="crescendo">渐强</button>
-                            <button type="button" class="instrument-btn" data-curve="decrescendo">渐弱</button>
-                            <button type="button" class="instrument-btn" data-curve="wave">波浪</button>
-                        </div>
+                    <div class="section-title">🎸 选择乐器</div>
+                    <div class="button-grid">
+                        <button type="button" class="instrument-btn active" data-instrument="kick">大鼓</button>
+                        <button type="button" class="instrument-btn active" data-instrument="snare">小鼓</button>
+                        <button type="button" class="instrument-btn active" data-instrument="hihat">高帽</button>
+                        <button type="button" class="instrument-btn active" data-instrument="bass">贝斯</button>
+                        <button type="button" class="instrument-btn" data-instrument="piano">钢琴</button>
+                        <button type="button" class="instrument-btn" data-instrument="guitar">吉他</button>
                     </div>
                 </div>
 
-                <!-- 按钮 -->
-                <div class="button-group-main">
-                    <button type="button" class="btn-secondary" id="previewBtn">🎧 预听</button>
-                    <button type="button" class="btn-secondary" id="downloadBtn" disabled>⬇️ 下载</button>
+                <div class="section">
+                    <div class="section-title">⚙️ 调整参数</div>
+                    <div>
+                        <div class="slider-label"><span>速度 (BPM)</span><span id="bpmVal">90</span></div>
+                        <input type="range" id="bpm" class="slider" min="60" max="180" value="90" step="1">
+                    </div>
+                    <div>
+                        <div class="slider-label"><span>长度 (秒)</span><span id="lenVal">60</span></div>
+                        <input type="range" id="length" class="slider" min="30" max="300" value="60" step="10">
+                    </div>
+                    <div>
+                        <div class="slider-label"><span>强度</span><span id="intVal">5</span>/10</div>
+                        <input type="range" id="intensity" class="slider" min="1" max="10" value="5" step="1">
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">😊 情绪</div>
+                    <div class="button-grid">
+                        <button type="button" class="mood-btn active" data-mood="neutral">中性</button>
+                        <button type="button" class="mood-btn" data-mood="happy">欢快</button>
+                        <button type="button" class="mood-btn" data-mood="sad">忧郁</button>
+                        <button type="button" class="mood-btn" data-mood="intense">紧张</button>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" id="previewBtn">🎧 预听</button>
+                    <button type="button" id="downloadBtn" disabled>⬇️ 下载</button>
                     <button type="submit" class="btn-primary" id="generateBtn">✨ 立即生成</button>
                 </div>
             </form>
 
             <div class="status" id="status"></div>
-            <div class="audio-player" id="audioPlayer">
-                <label>🎵 播放预览</label>
-                <audio id="audio" controls></audio>
-            </div>
+            <audio id="audio" controls></audio>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    <script src="app.js"></script>
+    <script>
+        let currentStyle = 'rap';
+        let currentMood = 'neutral';
+        let selectedInstruments = { kick: true, snare: true, hihat: true, bass: true, piano: false, guitar: false };
+        let audioContext = null;
+        let currentAudio = null;
+
+        const form = document.getElementById('form');
+        const bpm = document.getElementById('bpm');
+        const length = document.getElementById('length');
+        const intensity = document.getElementById('intensity');
+        const bpmVal = document.getElementById('bpmVal');
+        const lenVal = document.getElementById('lenVal');
+        const intVal = document.getElementById('intVal');
+        const status = document.getElementById('status');
+        const audio = document.getElementById('audio');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const previewBtn = document.getElementById('previewBtn');
+
+        // 更新显示
+        bpm.addEventListener('input', e => bpmVal.textContent = e.target.value);
+        length.addEventListener('input', e => lenVal.textContent = e.target.value);
+        intensity.addEventListener('input', e => intVal.textContent = e.target.value);
+
+        // 风格选择
+        document.querySelectorAll('.btn-style').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelectorAll('.btn-style').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentStyle = btn.dataset.style;
+            });
+        });
+
+        // 乐器选择
+        document.querySelectorAll('.instrument-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                btn.classList.toggle('active');
+                selectedInstruments[btn.dataset.instrument] = btn.classList.contains('active');
+            });
+        });
+
+        // 情绪选择
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMood = btn.dataset.mood;
+            });
+        });
+
+        function showStatus(msg, type) {
+            status.textContent = msg;
+            status.className = `status show ${type}`;
+            setTimeout(() => status.classList.remove('show'), 3000);
+        }
+
+        function generateAudio(bpmVal, lengthVal, intensityVal) {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            const sampleRate = audioContext.sampleRate;
+            const samples = sampleRate * lengthVal;
+            const buffer = audioContext.createBuffer(2, samples, sampleRate);
+            const left = buffer.getChannelData(0);
+            const right = buffer.getChannelData(1);
+            const beatDuration = 60 / bpmVal;
+            const beatSamples = beatDuration * sampleRate;
+            const intensity = intensityVal / 10;
+
+            for (let i = 0; i < samples; i++) {
+                const pos = (i % beatSamples) / beatSamples;
+                let sample = 0;
+                
+                if (selectedInstruments.kick && pos < 0.15) {
+                    sample += Math.sin(2 * Math.PI * (i / sampleRate) * 100) * 0.5 * intensity * Math.exp(-pos * 8);
+                }
+                if (selectedInstruments.snare && (pos > 0.45 && pos < 0.55)) {
+                    sample += (Math.random() * 2 - 1) * 0.3 * intensity;
+                }
+                if (selectedInstruments.hihat && pos % 0.25 < 0.08) {
+                    sample += (Math.random() * 2 - 1) * 0.2 * intensity;
+                }
+                if (selectedInstruments.bass) {
+                    sample += Math.sin(2 * Math.PI * (i / sampleRate) * 60) * 0.15 * intensity;
+                }
+
+                sample = Math.max(-1, Math.min(1, sample)) * 0.8;
+                left[i] = sample;
+                right[i] = sample;
+            }
+
+            return buffer;
+        }
+
+        function encodeWAV(audioBuffer, sampleRate) {
+            const left = audioBuffer.getChannelData(0);
+            const right = audioBuffer.getChannelData(1);
+            const interleaved = new Float32Array(left.length * 2);
+            for (let i = 0; i < left.length; i++) {
+                interleaved[i * 2] = left[i];
+                interleaved[i * 2 + 1] = right[i];
+            }
+            const buffer = new ArrayBuffer(44 + interleaved.length * 2);
+            const view = new DataView(buffer);
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+            };
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + interleaved.length * 2, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setInt16(20, 1, true);
+            view.setInt16(22, 2, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 4, true);
+            view.setInt16(32, 4, true);
+            view.setInt16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, interleaved.length * 2, true);
+            let index = 44;
+            for (let i = 0; i < interleaved.length; i++) {
+                let s = Math.max(-1, Math.min(1, interleaved[i])) * 0.8;
+                view.setInt16(index, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+                index += 2;
+            }
+            return buffer;
+        }
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            generateBtn.disabled = true;
+            showStatus('⏳ 正在生成...', 'info');
+            
+            try {
+                const buffer = generateAudio(parseInt(bpm.value), parseInt(length.value), parseInt(intensity.value));
+                const wav = encodeWAV(buffer, buffer.sampleRate);
+                const blob = new Blob([wav], { type: 'audio/wav' });
+                currentAudio = URL.createObjectURL(blob);
+                audio.src = currentAudio;
+                audio.classList.add('show');
+                downloadBtn.disabled = false;
+                showStatus('✅ 生成成功！', 'success');
+            } catch (err) {
+                showStatus('❌ 生成失败: ' + err.message, 'error');
+            }
+            generateBtn.disabled = false;
+        });
+
+        previewBtn.addEventListener('click', e => {
+            e.preventDefault();
+            if (currentAudio) audio.play();
+            else showStatus('⚠️ 请先生成', 'error');
+        });
+
+        downloadBtn.addEventListener('click', e => {
+            e.preventDefault();
+            if (currentAudio) {
+                const link = document.createElement('a');
+                link.href = currentAudio;
+                link.download = `beat_${currentStyle}.wav`;
+                link.click();
+                showStatus('✅ 下载成功！', 'success');
+            }
+        });
+    </script>
 </body>
 </html>
